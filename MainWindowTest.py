@@ -11,7 +11,7 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.plusBatton.clicked.connect(self.run)
 
     def run(self):
-        self.surprise.setText('Surprise')
+        self.surprise.setText('Surprise!')
 
 app = QApplication(sys.argv)
 ex = MyWidget()
