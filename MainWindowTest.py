@@ -1,17 +1,30 @@
-from Ui_MainWindow import Ui_MainWindow
+from MainWindowNew import Ui_MainWindow
+from AddOperationWidget import Operation_Add_Widget
+
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QLabel
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QLabel, QInputDialog
+
+
+class Adding_Widget(Operation_Add_Widget, QWidget):
+    def __init__(self):
+        super().__init__()
+
 
 class MyWidget(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.surprise = QLabel(self)
-        self.surprise.move(300, 300)
-        self.plusBatton.clicked.connect(self.run)
+        self.wi = Adding_Widget()
+        self.wi.move(100, 100)
 
-    def run(self):
-        self.surprise.setText('Surprise!')
+        self.AddButton.clicked.connect(self.open_adding)
+
+    def open_adding(self):
+        self.Window = Adding_Widget()
+        self.Window.move(560, 110)
+        self.Window.setupUi()
+        self.Window.show()
+
 
 app = QApplication(sys.argv)
 ex = MyWidget()
