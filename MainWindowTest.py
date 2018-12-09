@@ -5,6 +5,7 @@ import sys
 import datetime
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QLabel, QInputDialog
 from PyQt5.QtCore import QDate
+from OperationList import OperationList
 
 
 class Adding_Widget(Operation_Add_Widget, QWidget):
@@ -15,6 +16,10 @@ class Adding_Widget(Operation_Add_Widget, QWidget):
         today_date = QDate()
         today_date.setDate(int(now[0]), int(now[1]), int(now[2]))
         #self.dateEdit.setDate(today_date)
+
+class Operation_List(OperationList, QWidget):
+    def __init__(self, data):
+        super().__init__()
 
 
 class MyWidget(QMainWindow, Ui_MainWindow):
@@ -33,10 +38,11 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.SumLabel.setText(str(self.data['Sum']))
 
         self.AddButton.clicked.connect(self.open_adding)
+        self.MainListButton.clicked.connect(self.open_main_list)
 
     def open_adding(self):
         self.Window = Adding_Widget()
-        self.Window.move(560, 110)
+        self.Window.move(520, 100)
         self.Window.setupUi()
         self.Window.show()
         self.Window.SaveButton.clicked.connect(self.operation_saving)
@@ -60,6 +66,12 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.SumLabel.setText(str(self.data['Sum']))
         print(self.data)
         self.Window.close()
+
+    def open_main_list(self):
+        self.Window = Operation_List()
+        self.Window.move(520, 100)
+        self.Window.setupUi()
+        self.Window.show()
 
 
 app = QApplication(sys.argv)
