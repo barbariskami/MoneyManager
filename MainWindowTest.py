@@ -10,6 +10,7 @@ class Adding_Widget(Operation_Add_Widget, QWidget):
         super().__init__()
 
 
+
 class MyWidget(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
@@ -30,6 +31,19 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.Window.move(560, 110)
         self.Window.setupUi()
         self.Window.show()
+        self.Window.SaveButton.clicked.connect(self.operation_saving)
+
+    def operation_saving(self):
+        money = self.Window.SumEdit.text()
+        operation = '-' if self.Window.MinusButton.isChecked() else '+'
+        date = self.Window.dateEdit.date()
+        name = self.Window.NameEdit.text()
+        comment = self.Window.CommentEdit.text()
+        categories = [i.strip().lower() for i in self.Window.CategoriesEdit.text().split(',')]
+        self.data['Operations'].append(
+            {'money': money, 'operation': operation, 'date': date, 'name': name, 'comment': comment,
+             'categories': categories})
+        print(self.data)
 
 
 app = QApplication(sys.argv)

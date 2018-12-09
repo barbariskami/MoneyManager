@@ -7,9 +7,6 @@ def open_file(name):
     else:
         f = open(name, encoding='utf8').read()
         data = json.loads(f)
-        print(data)
     return data
 
-
-print(open_file('hello.txt'))
 
