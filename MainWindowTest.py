@@ -9,6 +9,7 @@ from Stat import Stat
 from FuncForDatesSorting import datesSorting
 from Saving import save_file
 
+
 class Adding_Widget(Operation_Add_Widget, QWidget):
     def __init__(self):
         super().__init__()

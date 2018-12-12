@@ -8,6 +8,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -52,10 +53,10 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.SumLabel.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:36pt;\">12 987 р</span></p></body></html>"))
+        self.SumLabel.setText(_translate("MainWindow",
+                                         "<html><head/><body><p><span style=\" font-size:36pt;\">12 987 р</span></p></body></html>"))
         self.AddButton.setText(_translate("MainWindow", "Добавить операцию"))
         self.MainListButton.setText(_translate("MainWindow", "Финансовые операции"))
         self.RegulalButton.setText(_translate("MainWindow", "Регклярные платежи"))
         self.CategoriesButton.setText(_translate("MainWindow", "Категории"))
         self.StatButton.setText(_translate("MainWindow", "Статистика"))
-
