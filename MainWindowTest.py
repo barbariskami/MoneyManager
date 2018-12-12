@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QLabel, QInputDi
 from PyQt5.QtCore import QDate
 from Stat import Stat
 from FuncForDatesSorting import datesSorting
-
+from Saving import save_file
 
 class Adding_Widget(Operation_Add_Widget, QWidget):
     def __init__(self):
@@ -43,6 +43,27 @@ class MyWidget(QMainWindow, Ui_MainWindow):
 
         self.AddButton.clicked.connect(self.open_adding)
         self.StatButton.clicked.connect(self.open_stat)
+
+    def closeEvent(self, event):
+        i, okBtnPressed = QInputDialog.getItem(
+            self,
+            "Выход",
+            "Вы хотите выйти? Выберите параметр",
+            ("Сохранить и выйти", "Не сохранять и выйти", "Не выходить"),
+            0,
+            False
+        )
+        if i == 'Сохранить и выйти':
+            save_file(self.FileName, self.data)
+            can_exit = True
+        elif i == 'Не сохранять и выйти':
+            can_exit = True
+        else:
+            can_exit = False
+        if can_exit:
+            event.accept()
+        else:
+            event.ignore()
 
     def open_adding(self):
         self.Window = Adding_Widget()
