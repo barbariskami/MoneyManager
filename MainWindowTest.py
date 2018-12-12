@@ -8,6 +8,7 @@ from PyQt5.QtCore import QDate
 from Stat import Stat
 from FuncForDatesSorting import datesSorting
 from Saving import save_file
+from OperationList import OperationList
 
 
 class Adding_Widget(Operation_Add_Widget, QWidget):
@@ -26,6 +27,11 @@ class Statyic_Window(QWidget, Stat):
         super().__init__()
         self.setupUi(sums, dates, income, expenditure)
 
+class MainList(OperationList, QWidget):
+    def __init__(self, data):
+        super().__init__()
+        self.setupUi(data)
+
 
 class MyWidget(QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -38,14 +44,16 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         if okButtonPressed:
             self.data = open_file(self.FileName)
         else:
-            self.data = open_file(self.FileName)
+            self.close()
 
         self.SumLabel.setText(str(self.data['Sum']))
 
         self.AddButton.clicked.connect(self.open_adding)
         self.StatButton.clicked.connect(self.open_stat)
+        self.MainListButton.clicked.connect(self.open_main_list)
 
     def closeEvent(self, event):
+        print(event)
         i, okBtnPressed = QInputDialog.getItem(
             self,
             "Выход",
@@ -137,6 +145,11 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.SumLabel.setText(str(self.data['Sum']))
 
         self.Window.close()
+
+    def open_main_list(self):
+        self.Window = MainList()
+        self.Window.move(520, 100)
+        self.Window.show()
 
 
 app = QApplication(sys.argv)
