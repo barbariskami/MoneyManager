@@ -8,8 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Operation_Add_Widget(object):
-    def setupUi(self):
+    def setupUi(self, date):
         # self.setObjectName("self")
         # self.resize(540, 443)
         self.PlusButton = QtWidgets.QRadioButton(self)
@@ -27,6 +28,7 @@ class Operation_Add_Widget(object):
         self.dateEdit = QtWidgets.QDateEdit(self)
         self.dateEdit.setGeometry(QtCore.QRect(290, 30, 110, 24))
         self.dateEdit.setObjectName("dateEdit")
+        self.dateEdit.setDate(date)
         self.label_3 = QtWidgets.QLabel(self)
         self.label_3.setGeometry(QtCore.QRect(30, 120, 91, 16))
         self.label_3.setObjectName("label_3")
@@ -66,4 +68,3 @@ class Operation_Add_Widget(object):
         self.label_4.setText(_translate("self", "Комментарий"))
         self.label_5.setText(_translate("self", "Категории (через запятую)"))
         self.SaveButton.setText(_translate("self", "Сохранить"))
-

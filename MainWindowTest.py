@@ -5,7 +5,8 @@ import sys
 import datetime
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QLabel, QInputDialog
 from PyQt5.QtCore import QDate
-from OperationList import OperationList
+from Stat import Stat
+from FuncForDatesSorting import datesSorting
 
 
 class Adding_Widget(Operation_Add_Widget, QWidget):
@@ -15,11 +16,14 @@ class Adding_Widget(Operation_Add_Widget, QWidget):
         now = str(datetime.datetime.now()).split()[0].split('-')
         today_date = QDate()
         today_date.setDate(int(now[0]), int(now[1]), int(now[2]))
-        #self.dateEdit.setDate(today_date)
 
-class Operation_List(OperationList, QWidget):
-    def __init__(self, data):
+        self.setupUi(today_date)
+
+
+class Statyic_Window(QWidget, Stat):
+    def __init__(self, sums, dates, income, expenditure):
         super().__init__()
+        self.setupUi(sums, dates, income, expenditure)
 
 
 class MyWidget(QMainWindow, Ui_MainWindow):
@@ -38,14 +42,57 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.SumLabel.setText(str(self.data['Sum']))
 
         self.AddButton.clicked.connect(self.open_adding)
-        self.MainListButton.clicked.connect(self.open_main_list)
+        self.StatButton.clicked.connect(self.open_stat)
 
     def open_adding(self):
         self.Window = Adding_Widget()
         self.Window.move(520, 100)
-        self.Window.setupUi()
         self.Window.show()
         self.Window.SaveButton.clicked.connect(self.operation_saving)
+
+    def open_stat(self):
+        # При открытии, если операции были совершены, производится их сортировка,
+        # Если же нет, на инициализацию подаются пустые списки
+        if self.data['Operations']:
+            sums = [0]
+            dates = []
+            operations = [(i['money'], i['operation'], i['date']) for i in self.data['Operations']]
+
+            # Сортируется по возрастанию даты:
+            operations = sorted(operations, key=datesSorting)
+            dates.append(operations[0][2])
+
+            # Создаются списки для инициализации(видов состояние счета и даты)
+            # Вместе с этим считаются средние данные
+            income = 0
+            incomeDates = []
+            expenditure = 0
+            expenditureDates = []
+            for i in operations:
+                if i[1] == '+':
+                    sums.append(sums[-1] + i[0])
+                    income += i[0]
+                else:
+                    sums.append(sums[-1] - i[0])
+
+                    if (i[2][1], i[2][0]) not in incomeDates:
+                        incomeDates.append((i[2][1], i[2][0]))
+
+                    expenditure += i[0]
+                    if i[2] not in expenditureDates:
+                        expenditureDates.append(i[2])
+
+                dates.append(i[2])
+        else:
+            sums = []
+            dates = []
+
+        incomeAverage = f"{income / len(incomeDates):.{2}f}"
+        expenditureAverage = f"{expenditure / len(expenditureDates):.{2}f}"
+
+        self.Window = Statyic_Window(sums, dates, incomeAverage, expenditureAverage)
+        self.Window.move(520, 100)
+        self.Window.show()
 
     def operation_saving(self):
         money = int(self.Window.SumEdit.text())
@@ -62,16 +109,12 @@ class MyWidget(QMainWindow, Ui_MainWindow):
             sum -= money
         else:
             sum += money
+        print(self.data)
+
         self.data['Sum'] = sum
         self.SumLabel.setText(str(self.data['Sum']))
-        print(self.data)
-        self.Window.close()
 
-    def open_main_list(self):
-        self.Window = Operation_List()
-        self.Window.move(520, 100)
-        self.Window.setupUi()
-        self.Window.show()
+        self.Window.close()
 
 
 app = QApplication(sys.argv)
