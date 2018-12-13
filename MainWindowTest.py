@@ -9,6 +9,7 @@ from Stat import Stat
 from FuncForDatesSorting import datesSorting
 from Saving import save_file
 from OperationList import OperationList
+from FuncForDatesSorting import datesSorting
 
 
 class Adding_Widget(Operation_Add_Widget, QWidget):
@@ -59,7 +60,7 @@ class MyWidget(QMainWindow, Ui_MainWindow):
             "Выход",
             "Вы хотите выйти? Выберите параметр",
             ("Сохранить и выйти", "Не сохранять и выйти", "Не выходить"),
-            2,
+            1,
             False
         )
         if i == 'Сохранить и выйти':
@@ -102,23 +103,33 @@ class MyWidget(QMainWindow, Ui_MainWindow):
                 if i[1] == '+':
                     sums.append(sums[-1] + i[0])
                     income += i[0]
-                else:
-                    sums.append(sums[-1] - i[0])
 
                     if (i[2][1], i[2][0]) not in incomeDates:
                         incomeDates.append((i[2][1], i[2][0]))
-
+                else:
+                    sums.append(sums[-1] - i[0])
                     expenditure += i[0]
-                    if i[2] not in expenditureDates:
-                        expenditureDates.append(i[2])
+
+                    if (i[2][2], i[2][1], i[2][0]) not in expenditureDates:
+                        expenditureDates.append((i[2][2], i[2][1], i[2][0]))
 
                 dates.append(i[2])
+
+            if incomeDates:
+                incomeAverage = f"{income / len(incomeDates):.{2}f}"
+            else:
+                incomeAverage = '0.00'
+            if expenditureDates:
+                expenditureAverage = f"{expenditure / len(expenditureDates):.{2}f}"
+            else:
+                expenditureAverage = '0.00'
+
+
         else:
             sums = []
             dates = []
-
-        incomeAverage = f"{income / len(incomeDates):.{2}f}"
-        expenditureAverage = f"{expenditure / len(expenditureDates):.{2}f}"
+            incomeAverage = '0.00'
+            expenditureAverage = '0.00'
 
         self.Window = Statyic_Window(sums, dates, incomeAverage, expenditureAverage)
         self.Window.move(520, 100)
@@ -139,7 +150,6 @@ class MyWidget(QMainWindow, Ui_MainWindow):
             sum -= money
         else:
             sum += money
-        print(self.data)
 
         self.data['Sum'] = sum
         self.SumLabel.setText(str(self.data['Sum']))
@@ -147,7 +157,9 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.Window.close()
 
     def open_main_list(self):
-        self.Window = MainList()
+        data = sorted(self.data['Operations'], key=lambda x: datesSorting(x, 'date'))
+        print(data)
+        self.Window = MainList(data)
         self.Window.move(520, 100)
         self.Window.show()
 
