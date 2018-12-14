@@ -7,6 +7,8 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from OperationList import Info, MyButton
+
 
 class CategoriesList(object):
     def setupUi(self, data):
@@ -45,13 +47,24 @@ class CategoriesList(object):
             self.mainLayout.addLayout(local_layout, k, 0)
             k += 1
             for operation in categories[category]:
-
                 self.mainLayout.addLayout(self.transform_data_into_layout(operation), k, 0)
                 k += 1
 
         self.widgetForLayout = QtWidgets.QWidget()
         self.widgetForLayout.setLayout(self.mainLayout)
         self.scrollArea.setWidget(self.widgetForLayout)
+
+        child = self.mainLayout.itemAt(0)
+        k = 0
+        while child:
+            if child.itemAt(1) is not None and type(child.itemAt(1).widget()) == MyButton:
+                item = child.itemAt(1).widget()
+                item.clicked.connect(self.open_info)
+            k += 1
+            child = self.mainLayout.itemAt(k)
+
+        self.retranslateUi(self)
+        QtCore.QMetaObject.connectSlotsByName(self)
 
         self.retranslateUi(self)
         QtCore.QMetaObject.connectSlotsByName(self)
@@ -64,7 +77,7 @@ class CategoriesList(object):
         sum.setText(data['operation'] + str(data['money']))
         layout.addWidget(sum)
 
-        name = QtWidgets.QPushButton()
+        name = MyButton(data)
         name.setText(data['name'])
         layout.addWidget(name)
 
@@ -74,8 +87,15 @@ class CategoriesList(object):
 
         return layout
 
+    def open_info(self):
+        data = self.sender().info
+        self.Window1 = Info(data)
+        print(data)
+        self.Window1.move(520, 100)
+        self.Window1.show()
+
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
-        self.label.setText(_translate("Form", "<html><head/><body><p><span style=\" font-size:18pt;\">Список категорий</span></p></body></html>"))
-
+        self.label.setText(_translate("Form",
+                                      "<html><head/><body><p><span style=\" font-size:18pt;\">Список категорий</span></p></body></html>"))

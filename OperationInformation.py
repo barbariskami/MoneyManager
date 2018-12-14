@@ -75,6 +75,9 @@ class InfoWindow(object):
         self.widgetForLayout.setLayout(self.layout)
         self.scrollArea.setWidget(self.widgetForLayout)
 
+        self.retranslateUi(self)
+        QtCore.QMetaObject.connectSlotsByName(self)
+
         self.SumLabel.setText(operation['operation'] + str(operation['money']))
 
         self.DateLabel.setText('.'.join([str(i) for i in operation['date']]))
@@ -87,16 +90,14 @@ class InfoWindow(object):
         for i in comment:
             if len(i) > 31:
                 new_comment += '\n' + i + '\n'
-            elif pos + len(i) > 31:
-                new_comment += '\n' + i
+                pos = 0
+            elif pos + len(i) > 60:
+                new_comment += '\n' + i + ' '
+                pos = len(i) + 1
             else:
-                new_comment += i
+                new_comment += i + ' '
+                pos += len(i) + 1
         self.CommentLabel.setText(new_comment)
-
-
-
-        self.retranslateUi(self)
-        QtCore.QMetaObject.connectSlotsByName(self)
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate

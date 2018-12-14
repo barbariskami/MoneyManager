@@ -8,12 +8,14 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from OperationInformation import InfoWindow
+# from PyQt5.QtWidgets import QWidget, QApplication, QPushButton
 
 
 class Info(QtWidgets.QWidget, InfoWindow):
     def __init__(self, operation):
         super().__init__()
         self.setupUi(operation)
+
 
 class OperationList(object):
     def setupUi(self, data):
@@ -38,10 +40,6 @@ class OperationList(object):
             last_date = data[0]['date'][:2]
             last_date[1] -= 1  # Для вывода первой строки о месяце
             for i in data:
-                print(last_date != i['date'][:2])
-                print(last_date)
-                print(i['date'][:2])
-                print()
                 if last_date != i['date'][:2]:
                     # Добавление строки названия месяца
                     month = QtWidgets.QLabel()
@@ -64,8 +62,9 @@ class OperationList(object):
         child = self.mainLayout.itemAt(0)
         k = 0
         while child:
-            if type(child.itemAt(1).widget()) == QtWidgets.QPushButton:
-                child.itemAt(1).widget().clicked.connect(self.open_info)
+            if child.itemAt(1) is not None and type(child.itemAt(1).widget()) == MyButton:
+                item = child.itemAt(1).widget()
+                item.clicked.connect(self.open_info)
             k += 1
             child = self.mainLayout.itemAt(k)
 
@@ -80,7 +79,7 @@ class OperationList(object):
         sum.setText(data['operation'] + str(data['money']))
         layout.addWidget(sum)
 
-        name = QtWidgets.QPushButton()
+        name = MyButton(data)
         name.setText(data['name'])
         layout.addWidget(name)
 
@@ -97,12 +96,14 @@ class OperationList(object):
                                       "<html><head/><body><p><span style=\" font-size:18pt;\">Список операций</span></p></body></html>"))
 
     def open_info(self):
-        self.Window1 = Info()
+        data = self.sender().info
+        self.Window1 = Info(data)
+        print(data)
         self.Window1.move(520, 100)
         self.Window1.show()
 
-class MyLayout(QtWidgets.QHBoxLayout):
+
+class MyButton(QtWidgets.QPushButton):
     def __init__(self, data):
         super().__init__()
-        self.addWidget(QtWidgets.QPushButton())
-        self.addWidget(QtWidgets.QPushButton())
+        self.info = data

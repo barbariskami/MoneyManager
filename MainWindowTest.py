@@ -3,19 +3,20 @@ from AddOperationWidget import Operation_Add_Widget
 from OpenFile import open_file
 import sys
 import datetime
-from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QLabel, QInputDialog
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QInputDialog
 from PyQt5.QtCore import QDate
 from Stat import Stat
-from FuncForDatesSorting import datesSorting
 from Saving import save_file
 from OperationList import OperationList
 from FuncForDatesSorting import datesSorting
 from CategoriesList import CategoriesList
 
+
 class CategoriesWindow(QWidget, CategoriesList):
     def __init__(self, data):
         super().__init__()
         self.setupUi(data)
+
 
 class Adding_Widget(Operation_Add_Widget, QWidget):
     def __init__(self):
@@ -32,6 +33,7 @@ class Statyic_Window(QWidget, Stat):
     def __init__(self, sums, dates, income, expenditure):
         super().__init__()
         self.setupUi(sums, dates, income, expenditure)
+
 
 class MainList(OperationList, QWidget):
     def __init__(self, data):
@@ -58,9 +60,9 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.StatButton.clicked.connect(self.open_stat)
         self.MainListButton.clicked.connect(self.open_main_list)
         self.CategoriesButton.clicked.connect(self.open_categories)
+        self.open_main_list()
 
     def closeEvent(self, event):
-        print(event)
         i, okBtnPressed = QInputDialog.getItem(
             self,
             "Выход",
@@ -142,31 +144,48 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.Window.show()
 
     def operation_saving(self):
-        money = int(self.Window.SumEdit.text())
-        operation = '-' if self.Window.MinusButton.isChecked() else '+'
-        date = self.Window.dateEdit.date().getDate()
-        name = self.Window.NameEdit.text()
-        comment = self.Window.CommentEdit.text()
-        categories = [i.strip().lower() for i in self.Window.CategoriesEdit.text().split(',')]
-        self.data['Operations'].append(
-            {'money': money, 'operation': operation, 'date': date, 'name': name, 'comment': comment,
-             'categories': categories})
-        sum = self.data['Sum']
-        if operation == '-':
-            sum -= money
+        condition1 = self.Window.SumEdit.text().isdigit()
+        condition2 = self.Window.MinusButton.isChecked() or self.Window.PlusButton.isChecked()
+        condition3 = self.Window.NameEdit.text() != ''
+        if condition1 and condition2 and condition3:
+            money = int(self.Window.SumEdit.text())
+            operation = '-' if self.Window.MinusButton.isChecked() else '+'
+            date = self.Window.dateEdit.date().getDate()
+            name = self.Window.NameEdit.text()
+            comment = self.Window.CommentEdit.text()
+            categories = [i.strip().lower() for i in self.Window.CategoriesEdit.text().split(',')]
+            self.data['Operations'].append(
+                {'money': money, 'operation': operation, 'date': date, 'name': name, 'comment': comment,
+                 'categories': categories})
+            sum = self.data['Sum']
+            if operation == '-':
+                sum -= money
+            else:
+                sum += money
+
+            self.data['Sum'] = sum
+            self.SumLabel.setText(str(self.data['Sum']))
+
+            self.Window.close()
+            self.open_main_list()
         else:
-            sum += money
-
-        self.data['Sum'] = sum
-        self.SumLabel.setText(str(self.data['Sum']))
-
-        self.Window.close()
+            i, okBtnPressed = QInputDialog.getItem(
+                self,
+                "Сообщение",
+                "Необходимо ввести сумму, знак и имя",
+                ("Закрыть и не сохранять", "Вернуться"),
+                1,
+                False
+            )
+            if i == 'Закрыть и не сохранять':
+                self.Window.close()
+                self.open_main_list()
 
     def open_main_list(self):
         data = sorted(self.data['Operations'], key=lambda x: datesSorting(x, 'date'))
         print(data)
         self.Window = MainList(data)
-        self.Window.move(520, 100)
+        self.Window.move(540, 100)
         self.Window.show()
 
     def open_categories(self):
