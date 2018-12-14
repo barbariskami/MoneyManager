@@ -7,7 +7,13 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from OperationInformation import InfoWindow
 
+
+class Info(QtWidgets.QWidget, InfoWindow):
+    def __init__(self, operation):
+        super().__init__()
+        self.setupUi(operation)
 
 class OperationList(object):
     def setupUi(self, data):
@@ -55,6 +61,14 @@ class OperationList(object):
         self.WidgetForLayout.setLayout(self.mainLayout)
         self.scrollArea.setWidget(self.WidgetForLayout)
 
+        child = self.mainLayout.itemAt(0)
+        k = 0
+        while child:
+            if type(child.itemAt(1).widget()) == QtWidgets.QPushButton:
+                child.itemAt(1).widget().clicked.connect(self.open_info)
+            k += 1
+            child = self.mainLayout.itemAt(k)
+
         self.retranslateUi(self)
         QtCore.QMetaObject.connectSlotsByName(self)
 
@@ -82,6 +96,10 @@ class OperationList(object):
         self.label.setText(_translate("Form",
                                       "<html><head/><body><p><span style=\" font-size:18pt;\">Список операций</span></p></body></html>"))
 
+    def open_info(self):
+        self.Window1 = Info()
+        self.Window1.move(520, 100)
+        self.Window1.show()
 
 class MyLayout(QtWidgets.QHBoxLayout):
     def __init__(self, data):

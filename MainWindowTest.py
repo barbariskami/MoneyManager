@@ -10,7 +10,12 @@ from FuncForDatesSorting import datesSorting
 from Saving import save_file
 from OperationList import OperationList
 from FuncForDatesSorting import datesSorting
+from CategoriesList import CategoriesList
 
+class CategoriesWindow(QWidget, CategoriesList):
+    def __init__(self, data):
+        super().__init__()
+        self.setupUi(data)
 
 class Adding_Widget(Operation_Add_Widget, QWidget):
     def __init__(self):
@@ -52,6 +57,7 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.AddButton.clicked.connect(self.open_adding)
         self.StatButton.clicked.connect(self.open_stat)
         self.MainListButton.clicked.connect(self.open_main_list)
+        self.CategoriesButton.clicked.connect(self.open_categories)
 
     def closeEvent(self, event):
         print(event)
@@ -160,6 +166,12 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         data = sorted(self.data['Operations'], key=lambda x: datesSorting(x, 'date'))
         print(data)
         self.Window = MainList(data)
+        self.Window.move(520, 100)
+        self.Window.show()
+
+    def open_categories(self):
+        data = sorted(self.data['Operations'], key=lambda x: datesSorting(x, 'date'))
+        self.Window = CategoriesWindow(data)
         self.Window.move(520, 100)
         self.Window.show()
 
