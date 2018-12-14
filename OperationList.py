@@ -37,7 +37,7 @@ class OperationList(object):
         self.mainLayout = QtWidgets.QGridLayout()
         k = 0
         if data:
-            last_date = data[0]['date'][:2]
+            last_date = [data[0]['date'][0], data[0]['date'][1]]
             last_date[1] -= 1  # Для вывода первой строки о месяце
             for i in data:
                 if last_date != i['date'][:2]:
