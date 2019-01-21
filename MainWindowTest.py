@@ -183,7 +183,6 @@ class MyWidget(QMainWindow, Ui_MainWindow):
 
     def open_main_list(self):
         data = sorted(self.data['Operations'], key=lambda x: datesSorting(x, 'date'))
-        print(data)
         self.Window = MainList(data)
         self.Window.move(540, 100)
         self.Window.show()
